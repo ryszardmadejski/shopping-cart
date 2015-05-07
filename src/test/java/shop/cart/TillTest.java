@@ -60,6 +60,20 @@ public class TillTest {
     public void getReceiptValue_multipleProducts() {
         List<Product> productList = Arrays.asList(
                 new Apple(),
+                new Orange(),
+                new Orange()
+        );
+
+        till.addProducts(productList);
+        int totalValue = till.getReceiptValue();
+        int expectedValue = getProductListExpectedValue(productList, 0, 0);
+
+        assertEquals(String.format("Returned products value is not equal to {0}", expectedValue), expectedValue, totalValue);
+    }
+
+    @Test
+    public void getReceiptValue_multipleProductsWithAppleOffer() {
+        List<Product> productList = Arrays.asList(
                 new Apple(),
                 new Orange(),
                 new Apple()
@@ -67,7 +81,23 @@ public class TillTest {
 
         till.addProducts(productList);
         int totalValue = till.getReceiptValue();
-        int expectedValue = getProductListExpectedValue(productList);
+        int expectedValue = getProductListExpectedValue(productList, 1, 0);
+
+        assertEquals(String.format("Returned products value is not equal to {0}", expectedValue), expectedValue, totalValue);
+    }
+
+    @Test
+    public void getReceiptValue_multipleProductsWithOrangeOffer() {
+        List<Product> productList = Arrays.asList(
+                new Orange(),
+                new Orange(),
+                new Apple(),
+                new Orange()
+        );
+
+        till.addProducts(productList);
+        int totalValue = till.getReceiptValue();
+        int expectedValue = getProductListExpectedValue(productList, 0, 1);
 
         assertEquals(String.format("Returned products value is not equal to {0}", expectedValue), expectedValue, totalValue);
     }
@@ -78,7 +108,7 @@ public class TillTest {
 
         till.addProducts(productList);
         int totalValue = till.getReceiptValue();
-        int expectedValue = getProductListExpectedValue(productList);
+        int expectedValue = getProductListExpectedValue(productList, 0, 0);
 
         assertEquals(String.format("Returned products value is not equal to {0}", expectedValue), expectedValue, totalValue);
     }
@@ -90,12 +120,15 @@ public class TillTest {
         assertEquals("Returned products value is not equal to 0", 0, totalValue);
     }
 
-    private int getProductListExpectedValue(List<Product> products) {
+    private int getProductListExpectedValue(List<Product> products, int numApplesToDiscount, int numOrangesToDiscount) {
         int value = 0;
 
         for(Product p: products) {
             value += p.getPrice();
         }
+
+        value -= numApplesToDiscount * 60;
+        value -= numOrangesToDiscount * 25;
 
         return value;
     }

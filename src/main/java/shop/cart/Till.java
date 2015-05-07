@@ -1,5 +1,7 @@
 package shop.cart;
 
+import shop.cart.products.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,9 +24,7 @@ public class Till {
         if(newProducts != null) {
             products.addAll(newProducts);
 
-            for(Product p: newProducts) {
-                receiptValue += p.getPrice();
-            }
+            recalculateReceipt();
         }
     }
 
@@ -44,6 +44,30 @@ public class Till {
      */
     public int getReceiptValue() {
         return receiptValue;
+    }
+
+    private void recalculateReceipt() {
+        receiptValue = 0;
+        int appleCount = 0;
+        int orangeCount = 0;
+
+        for(Product p: products) {
+            if(p instanceof Apple) {
+                appleCount++;
+                if(appleCount % 2 != 0) {
+                    receiptValue += p.getPrice();
+                }
+            }
+            else if(p instanceof Orange) {
+                orangeCount++;
+                if(orangeCount % 3 != 0) {
+                    receiptValue += p.getPrice();
+                }
+            }
+            else {
+                receiptValue += p.getPrice();
+            }
+        }
     }
 
 }
